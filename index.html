@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zombie Hunter PRO</title>
+    <style>
+        body { margin: 0; background: #1a1a1a; color: #fff; overflow: hidden; font-family: 'Arial', sans-serif; touch-action: manipulation; }
+        #ui { position: fixed; top: 15px; left: 15px; font-size: 20px; font-weight: bold; z-index: 10; text-shadow: 2px 2px 2px #000; }
+        canvas { display: block; background: #2f6b2f; }
+        
+        /* Bố cục nút bấm chuyên nghiệp */
+        #controls { position: fixed; bottom: 20px; width: 100%; display: flex; justify-content: space-around; padding: 0 20px; box-sizing: border-box; }
+        .btn { width: 75px; height: 75px; border-radius: 50%; border: 4px solid #fff; 
+               background: rgba(0, 0, 0, 0.6); color: white; font-size: 24px; font-weight: bold; 
+               display: flex; align-items: center; justify-content: center; cursor: pointer; user-select: none; }
+        .btn:active { background: #ff4444; transform: scale(0.9); }
+    </style>
+</head>
+<body>
+
+    <div id="ui">❤️ <span id="h">100</span> | 💰 <span id="s">0</span></div>
+    <canvas id="c"></canvas>
+
+    <div id="controls">
+        <div class="btn" id="left">⬅️</div>
+        <div class="btn" id="right">➡️</div>
+        <div class="btn" id="jump">⬆️</div>
+        <div class="btn" id="fire" style="background: #b00;">🔥</div>
+    </div>
+
+<script>
+const cv = c, ctx = cv.getContext('2d');
+function rs() { cv.width = innerWidth; cv.height = innerHeight; }
+window.onresize = rs; rs();
+
+let p = {x: 100, y: 300, h: 100, s: 0}, move = {l:0, r:0}, bul = [], zom = [{x: 500, y: 300, h: 30}];
+
+// Xử lý nút bấm
+const bind = (id, key) => {
+    const el = document.getElementById(id);
+    el.onmousedown = el.ontouchstart = () => move[key] = 1;
+    el.onmouseup = el.ontouchend = () => move[key] = 0;
+};
+bind('left', 'l'); bind('right', 'r');
+jump.onmousedown = () => p.y -= 50;
+fire.onmousedown = () => bul.push({x: p.x + 20, y: p.y + 20, vx: 10});
+
+function loop() {
+    if(move.l) p.x -= 5;
+    if(move.r) p.x += 5;
+    
+    // Cập nhật đạn
+    bul.forEach((b, i) => { 
+        b.x += b.vx; 
+        if(b.x > cv.width) bul.splice(i, 1); 
+    });
+    
+    ctx.clearRect(0, 0, cv.width, cv.height);
+    
+    // Vẽ Player
+    ctx.fillStyle = "cyan"; ctx.fillRect(p.x, p.y, 40, 40);
+    
+    // Vẽ Đạn
+    ctx.fillStyle = "yellow";
+    bul.forEach(b => ctx.fillRect(b.x, b.y, 10, 5));
+    
+    // Vẽ Zombie
+    ctx.fillStyle = "red";
+    zom.forEach(z => ctx.fillRect(z.x, z.y, 40, 40));
+    
+    requestAnimationFrame(loop);
+}
+loop();
+</script>
+</body>
+  </html>
+          
